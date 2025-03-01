@@ -710,8 +710,9 @@ public class DefaultConfigurationBuilder<T extends BuiltConfiguration> implement
 
     /** {@inheritDoc} */
     @Override
-    public void setLoggerContext(final @Nullable LoggerContext loggerContext) {
+    public ConfigurationBuilder<T> setLoggerContext(final @Nullable LoggerContext loggerContext) {
         this.loggerContext = loggerContext;
+        return this;
     }
 
     /**

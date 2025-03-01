@@ -518,8 +518,9 @@ public interface ConfigurationBuilder<T extends Configuration> extends Builder<T
     /**
      * Sets the logger context.
      * @param loggerContext the logger context.
+     * @return this builder (for chaining)
      */
-    void setLoggerContext(@Nullable LoggerContext loggerContext);
+    ConfigurationBuilder<T> setLoggerContext(@Nullable LoggerContext loggerContext);
 
     /**
      * Sets the configuration's "monitorInterval" attribute.
