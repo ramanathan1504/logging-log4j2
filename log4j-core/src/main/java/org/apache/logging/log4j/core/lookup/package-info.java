@@ -17,11 +17,14 @@
 /**
  * Log4j 2 Lookups. These are used in variable interpolation in various configuration attributes.
  * {@link org.apache.logging.log4j.core.lookup.StrLookup} plugins should use the
- * {@link org.apache.logging.log4j.core.lookup.Lookup} plugin namespace annotation.
+ * {@linkplain org.apache.logging.log4j.core.config.plugins.Plugin#category() plugin category}
+ * {@link org.apache.logging.log4j.core.lookup.StrLookup#CATEGORY Lookup}.
  */
+@BaselineIgnore("2.26.0")
 @Export
-@Version("3.0.0")
+@Version("2.26.0")
 package org.apache.logging.log4j.core.lookup;
 
+import aQute.bnd.annotation.baseline.BaselineIgnore;
 import org.osgi.annotation.bundle.Export;
 import org.osgi.annotation.versioning.Version;
