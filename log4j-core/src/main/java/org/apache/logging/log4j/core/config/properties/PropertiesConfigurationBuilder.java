@@ -82,6 +82,9 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
 
     @Override
     public PropertiesConfiguration build() {
+        if (rootProperties == null) {
+            throw new ConfigurationException("rootProperties must be set before calling build()");
+        }
         for (final String key : rootProperties.stringPropertyNames()) {
             if (!key.contains(".")) {
                 builder.setRootProperty(key, rootProperties.getProperty(key));
@@ -89,8 +92,8 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         }
         builder.setStatusLevel(Level.toLevel(rootProperties.getProperty(STATUS_KEY), Level.ERROR))
                 .setShutdownHook(rootProperties.getProperty(SHUTDOWN_HOOK))
-                .setShutdownTimeout(
-                        Long.parseLong(rootProperties.getProperty(SHUTDOWN_TIMEOUT, "0")), TimeUnit.MILLISECONDS)
+                .setShutdownTimeout(parseShutdownTimeout(rootProperties.getProperty(SHUTDOWN_TIMEOUT, "0")),
+                        TimeUnit.MILLISECONDS)
                 .setDestination(rootProperties.getProperty(DEST))
                 .setPackages(rootProperties.getProperty(PACKAGES))
                 .setConfigurationName(rootProperties.getProperty(CONFIG_NAME))
@@ -198,6 +201,16 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         PropertiesUtil.extractSubset(rootProperties, prefix);
     }
 
+    private static long parseShutdownTimeout(final String value) {
+        try {
+            return Long.parseLong(value);
+        } catch (final NumberFormatException e) {
+            throw new ConfigurationException(
+                    "Invalid value for '" + SHUTDOWN_TIMEOUT + "': expected a long integer but got \"" + value + "\"",
+                    e);
+        }
+    }
+
     private void processRemainingProperties(
             final ConfigurationBuilder<PropertiesConfiguration> builder, final Properties properties) {
         while (properties.size() > 0) {
@@ -274,7 +287,7 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
     }
 
     private LoggerComponentBuilder createLogger(final String key, final Properties properties) {
-        final String levelAndRefs = properties.getProperty("");
+        final String levelAndRefs = (String) properties.remove("");
         final String name = (String) properties.remove(CONFIG_NAME);
         final String location = (String) properties.remove("includeLocation");
         if (Strings.isEmpty(name)) {
@@ -310,11 +323,11 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         if (levelAndRefs != null) {
             loggerBuilder.setAttribute("levelAndRefs", levelAndRefs);
         }
-        return loggerBuilder;
+        return processRemainingProperties(loggerBuilder, properties);
     }
 
     private RootLoggerComponentBuilder createRootLogger(final Properties properties) {
-        final String levelAndRefs = properties.getProperty("");
+        final String levelAndRefs = (String) properties.remove("");
         final String level = Strings.trimToNull((String) properties.remove("level"));
         final String type = (String) properties.remove(CONFIG_TYPE);
         final String location = (String) properties.remove("includeLocation");
@@ -341,7 +354,8 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         if (levelAndRefs != null) {
             loggerBuilder.setAttribute("levelAndRefs", levelAndRefs);
         }
-        return addFiltersToComponent(loggerBuilder, properties);
+        addFiltersToComponent(loggerBuilder, properties);
+        return processRemainingProperties(loggerBuilder, properties);
     }
 
     private LayoutComponentBuilder createLayout(final String appenderName, final Properties properties) {
@@ -362,7 +376,7 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
             final ConfigurationBuilder<?> parentBuilder, final String key, final Properties properties) {
         final String name = (String) properties.remove(CONFIG_NAME);
         final String type = (String) properties.remove(CONFIG_TYPE);
-        if (type == null || Strings.isEmpty(type)) {
+        if (Strings.isEmpty(type)) {
             throw new ConfigurationException("No type attribute provided for component " + key);
         }
         final ComponentBuilder<B> componentBuilder = parentBuilder.newComponent(name, type);
