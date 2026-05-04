@@ -19,7 +19,6 @@ package org.apache.logging.log4j.core.config.builder.impl;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.builder.api.FilterComponentBuilder;
-import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * A default implementation of the {@link FilterComponentBuilder} interface for building
@@ -31,7 +30,6 @@ import org.osgi.annotation.versioning.ProviderType;
  *
  * @since 2.4
  */
-@ProviderType
 class DefaultFilterComponentBuilder extends DefaultComponentAndConfigurationBuilder<FilterComponentBuilder>
         implements FilterComponentBuilder {
 

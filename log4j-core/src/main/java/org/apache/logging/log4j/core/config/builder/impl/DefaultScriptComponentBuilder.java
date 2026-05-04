@@ -20,7 +20,6 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.builder.api.ScriptComponentBuilder;
 import org.apache.logging.log4j.core.script.Script;
 import org.jspecify.annotations.Nullable;
-import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * A default implementation of the {@link ScriptComponentBuilder} interface for building a {@link Script} component
@@ -32,7 +31,6 @@ import org.osgi.annotation.versioning.ProviderType;
  *
  * @since 2.5
  */
-@ProviderType
 class DefaultScriptComponentBuilder extends DefaultComponentAndConfigurationBuilder<ScriptComponentBuilder>
         implements ScriptComponentBuilder {
 

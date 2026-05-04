@@ -16,6 +16,7 @@
  */
 package org.apache.logging.log4j.core.config.builder.api;
 
+import java.util.Objects;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.util.Builder;
@@ -75,7 +76,9 @@ public interface ComponentBuilder<T extends ComponentBuilder<T>> extends Builder
      * @return this builder (for chaining)
      * @throws NullPointerException if the given {@code key} is {@code null}
      */
-    T setAttribute(String key, @Nullable Level level);
+    default T setAttribute(String key, @Nullable Level level) {
+        return setAttribute(key, level != null ? level.toString() : null);
+    }
 
     /**
      * Sets an enumeration attribute.
@@ -88,7 +91,9 @@ public interface ComponentBuilder<T extends ComponentBuilder<T>> extends Builder
      * @return this builder (for chaining)
      * @throws NullPointerException if the given {@code key} is {@code null}
      */
-    T setAttribute(String key, @Nullable Enum<?> value);
+    default T setAttribute(String key, @Nullable Enum<?> value) {
+        return setAttribute(key, value != null ? value.name() : null);
+    }
 
     /**
      * Sets an integer attribute.
@@ -97,7 +102,9 @@ public interface ComponentBuilder<T extends ComponentBuilder<T>> extends Builder
      * @return this builder (for chaining)
      * @throws NullPointerException if the given {@code key} is {@code null}
      */
-    T setAttribute(String key, int value);
+    default T setAttribute(String key, int value) {
+        return setAttribute(key, Integer.toString(value));
+    }
 
     /**
      * Sets a boolean attribute.
@@ -106,7 +113,9 @@ public interface ComponentBuilder<T extends ComponentBuilder<T>> extends Builder
      * @return this builder (for chaining)
      * @throws NullPointerException if the given {@code key} is {@code null}
      */
-    T setAttribute(String key, boolean value);
+    default T setAttribute(String key, boolean value) {
+        return setAttribute(key, Boolean.toString(value));
+    }
 
     /**
      * Sets an Object attribute.
@@ -119,7 +128,9 @@ public interface ComponentBuilder<T extends ComponentBuilder<T>> extends Builder
      * @return this builder (for chaining)
      * @throws NullPointerException if the given {@code key} is {@code null}
      */
-    T setAttribute(String key, @Nullable Object value);
+    default T setAttribute(String key, @Nullable Object value) {
+        return setAttribute(key, Objects.toString(value, null));
+    }
 
     /**
      * Adds a String attribute.

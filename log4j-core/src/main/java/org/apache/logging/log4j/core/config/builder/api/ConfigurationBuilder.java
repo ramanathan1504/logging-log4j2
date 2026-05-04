@@ -170,11 +170,11 @@ public interface ConfigurationBuilder<T extends Configuration> extends Builder<T
      * @param name the property name
      * @param value the property value
      * @return this builder (for chaining)
-     * @throws NullPointerException if the given {@code builder} is {@code null}
+     * @throws NullPointerException if either {@code name} or {@code value} is {@code null}
      * @deprecated use {@link #add(PropertyComponentBuilder)}
      */
     @Deprecated
-    ConfigurationBuilder<T> addProperty(@Nullable String name, @Nullable String value);
+    ConfigurationBuilder<T> addProperty(String name, String value);
 
     /**
      * Returns a {@link ScriptComponentBuilder} for creating a {@link Script} component.
@@ -519,7 +519,9 @@ public interface ConfigurationBuilder<T extends Configuration> extends Builder<T
      * Sets the logger context.
      * @param loggerContext the logger context.
      * @return this builder (for chaining)
+     * @deprecated logger context is supplied to the factory methods that create configuration instances
      */
+    @Deprecated
     ConfigurationBuilder<T> setLoggerContext(@Nullable LoggerContext loggerContext);
 
     /**

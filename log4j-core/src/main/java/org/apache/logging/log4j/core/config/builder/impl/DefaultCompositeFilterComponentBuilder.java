@@ -20,7 +20,6 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.builder.api.CompositeFilterComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.api.FilterComponentBuilder;
 import org.apache.logging.log4j.core.filter.CompositeFilter;
-import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * A default implementation of the {@link CompositeFilterComponentBuilder} interface for building
@@ -32,7 +31,6 @@ import org.osgi.annotation.versioning.ProviderType;
  *
  * @since 2.4
  */
-@ProviderType
 class DefaultCompositeFilterComponentBuilder
         extends DefaultComponentAndConfigurationBuilder<CompositeFilterComponentBuilder>
         implements CompositeFilterComponentBuilder {

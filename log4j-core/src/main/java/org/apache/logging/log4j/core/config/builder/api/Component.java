@@ -22,14 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
-import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Container for building Configurations. This class is not normally directly manipulated by users
  * of the Assembler API.
  * @since 2.4
  */
-@ProviderType
 public class Component {
 
     private final Map<String, String> attributes = new LinkedHashMap<>();
@@ -73,6 +71,7 @@ public class Component {
      * @param newValue the new value
      * @return the previous value or {@code null} if none was set
      */
+    @Deprecated
     public @Nullable String addAttribute(final String key, final @Nullable String newValue) {
         return putAttribute(key, newValue);
     }
@@ -107,7 +106,7 @@ public class Component {
      * @param newValue the new value
      * @return the previous value or {@code null} if none was set
      */
-    protected @Nullable String putAttribute(final String key, final @Nullable String newValue) {
+    public @Nullable String putAttribute(final String key, final @Nullable String newValue) {
 
         Objects.requireNonNull(key, "The 'key' argument cannot be null.");
 

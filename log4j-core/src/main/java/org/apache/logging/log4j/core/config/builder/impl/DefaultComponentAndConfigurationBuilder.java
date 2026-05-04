@@ -19,7 +19,6 @@ package org.apache.logging.log4j.core.config.builder.impl;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.builder.api.ComponentBuilder;
 import org.jspecify.annotations.Nullable;
-import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Extends {@code DefaultComponentBuilder} to specify {@code DefaultConfigurationBuilder<? extends Configuration>}
@@ -31,7 +30,6 @@ import org.osgi.annotation.versioning.ProviderType;
  *
  * @since 2.4
  */
-@ProviderType
 abstract class DefaultComponentAndConfigurationBuilder<T extends ComponentBuilder<T>>
         extends DefaultComponentBuilder<T, DefaultConfigurationBuilder<? extends Configuration>> {
 
