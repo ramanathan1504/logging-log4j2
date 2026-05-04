@@ -20,6 +20,7 @@ import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.builder.api.AppenderRefComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.api.FilterComponentBuilder;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * A default implementation of the {@link AppenderRefComponentBuilder} interface for building
@@ -31,6 +32,7 @@ import org.apache.logging.log4j.core.config.builder.api.FilterComponentBuilder;
  *
  * @since 2.4
  */
+@ProviderType
 class DefaultAppenderRefComponentBuilder extends DefaultComponentAndConfigurationBuilder<AppenderRefComponentBuilder>
         implements AppenderRefComponentBuilder {
 

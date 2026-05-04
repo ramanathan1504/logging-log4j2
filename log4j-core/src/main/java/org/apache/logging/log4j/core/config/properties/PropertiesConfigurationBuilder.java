@@ -213,7 +213,7 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
 
     private void processRemainingProperties(
             final ConfigurationBuilder<PropertiesConfiguration> builder, final Properties properties) {
-        while (!properties.isEmpty()) {
+        while (properties.size() > 0) {
             final String propertyName =
                     properties.stringPropertyNames().iterator().next();
             final int index = propertyName.indexOf('.');
@@ -281,7 +281,7 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         final AppenderRefComponentBuilder appenderRefBuilder = builder.newAppenderRef(ref);
         final String level = Strings.trimToNull((String) properties.remove("level"));
         if (!Strings.isEmpty(level)) {
-            appenderRefBuilder.setLevel(level);
+            appenderRefBuilder.setLevelAttribute(level);
         }
         return addFiltersToComponent(appenderRefBuilder, properties);
     }
@@ -318,7 +318,7 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         addFiltersToComponent(loggerBuilder, properties);
         final String additivity = (String) properties.remove("additivity");
         if (!Strings.isEmpty(additivity)) {
-            loggerBuilder.setAdditivity(additivity);
+            loggerBuilder.setAdditivityAttribute(additivity);
         }
         if (levelAndRefs != null) {
             loggerBuilder.setAttribute("levelAndRefs", levelAndRefs);
@@ -386,7 +386,8 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
     private static <B extends ComponentBuilder<?>> B processRemainingProperties(
             final B builder, final Properties properties) {
         while (!properties.isEmpty()) {
-            final String propertyName = properties.stringPropertyNames().iterator().next();
+            final String propertyName =
+                    properties.stringPropertyNames().iterator().next();
             final int index = propertyName.indexOf('.');
             if (index > 0) {
                 final String prefix = propertyName.substring(0, index);
@@ -410,13 +411,14 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         return componentBuilder;
     }
 
-    private <B extends LoggableComponentBuilder<? extends ComponentBuilder<?>>> void addLoggersToComponent(
+    private <B extends LoggableComponentBuilder<? extends ComponentBuilder<?>>> B addLoggersToComponent(
             final B loggerBuilder, final Properties properties) {
         final Map<String, Properties> appenderRefs =
                 PropertiesUtil.partitionOnCommonPrefixes(PropertiesUtil.extractSubset(properties, "appenderRef"));
         for (final Map.Entry<String, Properties> entry : appenderRefs.entrySet()) {
             loggerBuilder.add(createAppenderRef(entry.getKey().trim(), entry.getValue()));
         }
+        return loggerBuilder;
     }
 
     public PropertiesConfigurationBuilder setLoggerContext(final LoggerContext loggerContext) {

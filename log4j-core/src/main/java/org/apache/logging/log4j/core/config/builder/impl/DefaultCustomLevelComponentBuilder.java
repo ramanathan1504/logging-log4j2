@@ -20,6 +20,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.CustomLevelConfig;
 import org.apache.logging.log4j.core.config.builder.api.CustomLevelComponentBuilder;
 import org.jspecify.annotations.Nullable;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * A default implementation of the {@link CustomLevelComponentBuilder} interface for building
@@ -31,6 +32,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @since 2.4
  */
+@ProviderType
 class DefaultCustomLevelComponentBuilder extends DefaultComponentAndConfigurationBuilder<CustomLevelComponentBuilder>
         implements CustomLevelComponentBuilder {
 

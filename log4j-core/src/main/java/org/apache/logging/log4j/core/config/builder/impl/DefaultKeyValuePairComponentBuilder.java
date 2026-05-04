@@ -19,6 +19,7 @@ package org.apache.logging.log4j.core.config.builder.impl;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.builder.api.KeyValuePairComponentBuilder;
 import org.apache.logging.log4j.core.util.KeyValuePair;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * A default implementation of the {@link KeyValuePairComponentBuilder} interface for building
@@ -30,6 +31,7 @@ import org.apache.logging.log4j.core.util.KeyValuePair;
  *
  * @since 2.9
  */
+@ProviderType
 class DefaultKeyValuePairComponentBuilder extends DefaultComponentAndConfigurationBuilder<KeyValuePairComponentBuilder>
         implements KeyValuePairComponentBuilder {
 

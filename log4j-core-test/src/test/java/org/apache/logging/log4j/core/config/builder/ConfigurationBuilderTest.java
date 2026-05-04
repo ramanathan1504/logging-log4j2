@@ -59,7 +59,7 @@ class ConfigurationBuilderTest {
 
         builder.add(builder.newLogger("org.apache.logging.log4j", Level.DEBUG, true)
                 .add(builder.newAppenderRef("Stdout"))
-                .setAdditivity(false));
+                .setAdditivityAttribute(false));
         builder.add(builder.newLogger("org.apache.logging.log4j.core").add(builder.newAppenderRef("Stdout")));
         builder.add(builder.newRootLogger(Level.ERROR).add(builder.newAppenderRef("Stdout")));
         builder.add(builder.newProperty("MyKey", "MyValue"));

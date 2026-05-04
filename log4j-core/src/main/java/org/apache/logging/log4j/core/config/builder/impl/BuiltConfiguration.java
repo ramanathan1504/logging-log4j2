@@ -19,10 +19,8 @@ package org.apache.logging.log4j.core.config.builder.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.AbstractConfiguration;
 import org.apache.logging.log4j.core.config.Configuration;
@@ -51,7 +49,15 @@ public class BuiltConfiguration extends AbstractConfiguration {
     private final StatusConfiguration statusConfig;
     private String contentType = DEFAULT_CONTENT_TYPE;
 
-    protected Component rootComponent;
+    protected @Nullable Component rootComponent;
+    private @Nullable Component loggersComponent = null;
+    private @Nullable Component appendersComponent = null;
+    private @Nullable Component filtersComponent = null;
+    private @Nullable Component propertiesComponent = null;
+    private @Nullable Component customLevelsComponent = null;
+    private @Nullable Component scriptsComponent;
+    private @Nullable Component monitorResourcesComponent;
+    private @Nullable Component asyncWaitStrategyFactoryComponent;
 
     /**
      * Constructs a new built-configuration instance.
@@ -74,6 +80,47 @@ public class BuiltConfiguration extends AbstractConfiguration {
 
         statusConfig = new StatusConfiguration().withStatus(getDefaultStatus());
 
+        for (final Component component : rootComponent.getComponents()) {
+            switch (component.getPluginType()) {
+                case "Scripts": {
+                    scriptsComponent = component;
+                    break;
+                }
+                case "Loggers": {
+                    loggersComponent = component;
+                    break;
+                }
+                case "Appenders": {
+                    appendersComponent = component;
+                    break;
+                }
+                case "Filters": {
+                    filtersComponent = component;
+                    break;
+                }
+                case "Properties": {
+                    propertiesComponent = component;
+                    break;
+                }
+                case "CustomLevels": {
+                    customLevelsComponent = component;
+                    break;
+                }
+                case "MonitorResources": {
+                    monitorResourcesComponent = component;
+                    break;
+                }
+                case "AsyncWaitStrategyFactory": {
+                    asyncWaitStrategyFactoryComponent = component;
+                    break;
+                }
+                default: {
+                    // NO-OP
+                    break;
+                }
+            }
+        }
+
         this.rootComponent = rootComponent;
     }
 
@@ -82,71 +129,44 @@ public class BuiltConfiguration extends AbstractConfiguration {
     public void setup() {
 
         final List<Node> children = rootNode.getChildren();
-        final List<Component> components = rootComponent.getComponents();
-        final Set<String> handledPluginTypes = new LinkedHashSet<>();
 
-        addTopLevelComponent(children, components, "Properties");
-        handledPluginTypes.add("Properties");
-
-        addTopLevelComponent(children, components, "Scripts");
-        handledPluginTypes.add("Scripts");
-
-        addTopLevelComponent(children, components, "CustomLevels");
-        handledPluginTypes.add("CustomLevels");
-
-        addTopLevelComponent(children, components, "MonitorResources");
-        handledPluginTypes.add("MonitorResources");
-
-        addTopLevelComponent(children, components, "AsyncWaitStrategyFactory");
-        handledPluginTypes.add("AsyncWaitStrategyFactory");
-
-        addTopLevelFilters(children, components);
-        handledPluginTypes.add("Filters");
-
-        addTopLevelComponent(children, components, "Appenders");
-        handledPluginTypes.add("Appenders");
-
-        addTopLevelComponent(children, components, "Loggers");
-        handledPluginTypes.add("Loggers");
-
-        for (final Component component : components) {
-            if (!handledPluginTypes.contains(component.getPluginType())) {
-                addComponentAsRootChild(children, component);
-            }
+        if (propertiesComponent != null && !propertiesComponent.getComponents().isEmpty()) {
+            children.add(convertToNode(rootNode, propertiesComponent));
         }
-    }
 
-    private void addTopLevelComponent(
-            final List<Node> children, final List<Component> components, final String pluginType) {
-        for (final Component component : components) {
-            if (pluginType.equals(component.getPluginType())) {
-                addComponentAsRootChild(children, component);
-            }
+        if (scriptsComponent != null && !scriptsComponent.getComponents().isEmpty()) {
+            children.add(convertToNode(rootNode, scriptsComponent));
         }
-    }
 
-    private void addTopLevelFilters(final List<Node> children, final List<Component> components) {
-        for (final Component component : components) {
-            if (!"Filters".equals(component.getPluginType())) {
-                continue;
-            }
-            if (component.getComponents().size() == 1
-                    && component.getAttributes().isEmpty()
-                    && component.getValue() == null) {
-                children.add(convertToNode(rootNode, component.getComponents().get(0)));
+        if (customLevelsComponent != null
+                && !customLevelsComponent.getComponents().isEmpty()) {
+            children.add(convertToNode(rootNode, customLevelsComponent));
+        }
+        if (monitorResourcesComponent != null
+                && monitorResourcesComponent.getComponents().size() > 0) {
+            children.add(convertToNode(rootNode, monitorResourcesComponent));
+        }
+        if (asyncWaitStrategyFactoryComponent != null) {
+            children.add(convertToNode(rootNode, asyncWaitStrategyFactoryComponent));
+        }
+        if (loggersComponent != null && !loggersComponent.getComponents().isEmpty()) {
+            children.add(convertToNode(rootNode, loggersComponent));
+        }
+
+        if (appendersComponent != null && !appendersComponent.getComponents().isEmpty()) {
+            children.add(convertToNode(rootNode, appendersComponent));
+        }
+
+        if (filtersComponent != null && !filtersComponent.getComponents().isEmpty()) {
+            if (filtersComponent.getComponents().size() == 1) {
+                children.add(
+                        convertToNode(rootNode, filtersComponent.getComponents().get(0)));
             } else {
-                addComponentAsRootChild(children, component);
+                children.add(convertToNode(rootNode, filtersComponent));
             }
         }
-    }
 
-    private void addComponentAsRootChild(final List<Node> children, final Component component) {
-        if (component.getComponents().isEmpty()
-                && component.getAttributes().isEmpty()
-                && component.getValue() == null) {
-            return;
-        }
-        children.add(convertToNode(rootNode, component));
+        rootComponent = null;
     }
 
     /**

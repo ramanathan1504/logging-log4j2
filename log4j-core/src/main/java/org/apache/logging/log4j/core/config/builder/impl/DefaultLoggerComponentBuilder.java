@@ -22,6 +22,7 @@ import org.apache.logging.log4j.core.config.builder.api.AppenderRefComponentBuil
 import org.apache.logging.log4j.core.config.builder.api.FilterComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.api.LoggerComponentBuilder;
 import org.jspecify.annotations.Nullable;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * A default implementation of the {@link LoggerComponentBuilder} interface for building
@@ -33,6 +34,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @since 2.4
  */
+@ProviderType
 class DefaultLoggerComponentBuilder extends DefaultComponentAndConfigurationBuilder<LoggerComponentBuilder>
         implements LoggerComponentBuilder {
 

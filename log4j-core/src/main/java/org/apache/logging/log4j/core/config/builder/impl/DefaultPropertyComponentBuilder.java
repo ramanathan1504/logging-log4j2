@@ -20,6 +20,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.builder.api.PropertyComponentBuilder;
 import org.jspecify.annotations.Nullable;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * A default implementation of the {@link PropertyComponentBuilder} interface for constructing
@@ -31,6 +32,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @since 2.9
  */
+@ProviderType
 class DefaultPropertyComponentBuilder extends DefaultComponentAndConfigurationBuilder<PropertyComponentBuilder>
         implements PropertyComponentBuilder {
 

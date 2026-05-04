@@ -22,11 +22,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.builder.api.Component;
 import org.apache.logging.log4j.core.config.builder.api.ComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Generic base default {@link ComponentBuilder} implementation that captures attributes and children
@@ -36,6 +39,7 @@ import org.jspecify.annotations.Nullable;
  * @param <CB> the type of the configuration builder
  * @since 2.4
  */
+@ProviderType
 class DefaultComponentBuilder<T extends ComponentBuilder<T>, CB extends ConfigurationBuilder<? extends Configuration>>
         implements ComponentBuilder<T> {
 
@@ -57,7 +61,7 @@ class DefaultComponentBuilder<T extends ComponentBuilder<T>, CB extends Configur
     }
 
     /**
-     * Constructs a new instance with the given configuration builder, plugin-type, name, and {@code null} value.
+     * Constructs a new instancer with the given configuration builder, plugin-type, name, and {@code null} value.
      * @param builder the configuration builder
      * @param pluginType the plugin-type of the component being built
      * @param name the component name
@@ -103,7 +107,7 @@ class DefaultComponentBuilder<T extends ComponentBuilder<T>, CB extends Configur
 
     /** {@inheritDoc} */
     @Override
-    public CB getBuilder() {
+    public @NonNull CB getBuilder() {
         return builder;
     }
 
@@ -113,6 +117,35 @@ class DefaultComponentBuilder<T extends ComponentBuilder<T>, CB extends Configur
         return name;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public T setAttribute(final String key, final boolean value) {
+        return putAttribute(key, Boolean.toString(value));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public T setAttribute(final String key, final int value) {
+        return putAttribute(key, Integer.toString(value));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public T setAttribute(final String key, final @Nullable Enum<?> value) {
+        return putAttribute(key, (value != null) ? value.name() : null);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public T setAttribute(final String key, final @Nullable Level level) {
+        return putAttribute(key, (level != null) ? level.toString() : null);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public T setAttribute(final String key, final @Nullable Object value) {
+        return putAttribute(key, Objects.toString(value, null));
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -127,8 +160,10 @@ class DefaultComponentBuilder<T extends ComponentBuilder<T>, CB extends Configur
      * </p>
      */
     protected void clear() {
-        attributes.clear();
-        components.clear();
+        synchronized (this) {
+            attributes.clear();
+            components.clear();
+        }
     }
 
     /**
@@ -137,7 +172,7 @@ class DefaultComponentBuilder<T extends ComponentBuilder<T>, CB extends Configur
      * @param key the key
      * @return the attribute value or {@code null} if not found
      */
-    protected @Nullable String getAttribute(final String key) {
+    protected @Nullable String getAttribute(final @NonNull String key) {
 
         Objects.requireNonNull(key, "The 'key' argument must not be null.");
 
@@ -159,7 +194,7 @@ class DefaultComponentBuilder<T extends ComponentBuilder<T>, CB extends Configur
      * Gets the list of child components.
      * @return an <i>immutable</i> list of the child components
      */
-    protected List<? extends Component> getComponents() {
+    protected List<Component> getComponents() {
         return Collections.unmodifiableList(this.components);
     }
 
@@ -174,7 +209,7 @@ class DefaultComponentBuilder<T extends ComponentBuilder<T>, CB extends Configur
      * @return this builder (for chaining)
      * @throws NullPointerException if the given {@code key} argument is {@code null}
      */
-    private T putAttribute(final String key, final @Nullable String value) {
+    private T putAttribute(final @NonNull String key, final @Nullable String value) {
 
         Objects.requireNonNull(key, "The 'key' argument must not be null.");
 
