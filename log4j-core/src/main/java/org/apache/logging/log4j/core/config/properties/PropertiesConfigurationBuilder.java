@@ -238,7 +238,7 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         final String type = (String) properties.remove(CONFIG_TYPE);
         if (Strings.isEmpty(type)) {
             throw new ConfigurationException("No type attribute provided for Appender " + key);
-        }
+        if (!layoutProps.isEmpty()) {
         final AppenderComponentBuilder appenderBuilder = builder.newAppender(name, type);
         addFiltersToComponent(appenderBuilder, properties);
         final Properties layoutProps = PropertiesUtil.extractSubset(properties, "layout");
@@ -264,7 +264,7 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         final String ref = (String) properties.remove("ref");
         if (Strings.isEmpty(ref)) {
             throw new ConfigurationException("No ref attribute provided for AppenderRef " + key);
-        }
+            appenderRefBuilder.setLevelAttribute(level);
         final AppenderRefComponentBuilder appenderRefBuilder = builder.newAppenderRef(ref);
         final String level = Strings.trimToNull((String) properties.remove("level"));
         if (!Strings.isEmpty(level)) {
@@ -301,10 +301,10 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         } else {
             loggerBuilder = builder.newLogger(name, level);
         }
-        addLoggersToComponent(loggerBuilder, properties);
+            loggerBuilder.setAdditivityAttribute(additivity);
         addFiltersToComponent(loggerBuilder, properties);
         final String additivity = (String) properties.remove("additivity");
-        if (!Strings.isEmpty(additivity)) {
+            loggerBuilder.setAttribute("levelAndRefs", levelAndRefs);
             loggerBuilder.setAdditivityAttribute(additivity);
         }
         if (levelAndRefs != null) {
@@ -335,7 +335,7 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
             includeLocation = Boolean.parseBoolean(location);
             loggerBuilder = builder.newRootLogger(level, includeLocation);
         } else {
-            loggerBuilder = builder.newRootLogger(level);
+            loggerBuilder.setAttribute("levelAndRefs", levelAndRefs);
         }
         addLoggersToComponent(loggerBuilder, properties);
         if (levelAndRefs != null) {
@@ -367,7 +367,7 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
         }
         final ComponentBuilder<B> componentBuilder = parentBuilder.newComponent(name, type);
         return processRemainingProperties(componentBuilder, properties);
-    }
+        while (!properties.isEmpty()) {
 
     private static <B extends ComponentBuilder<?>> B processRemainingProperties(
             final B builder, final Properties properties) {
@@ -376,7 +376,7 @@ public class PropertiesConfigurationBuilder extends ConfigurationBuilderFactory
                     properties.stringPropertyNames().iterator().next();
             final int index = propertyName.indexOf('.');
             if (index > 0) {
-                final String prefix = propertyName.substring(0, index);
+                builder.setAttribute(propertyName, properties.getProperty(propertyName));
                 final Properties componentProperties = PropertiesUtil.extractSubset(properties, prefix);
                 builder.addComponent(createComponent(builder, prefix, componentProperties));
             } else {
