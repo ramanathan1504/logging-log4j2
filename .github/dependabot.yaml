@@ -32,6 +32,8 @@
 #
 # [1] https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 #
+# Trigger re-evaluation on: 2026-05-10 (force Dependabot processing)
+#
 
 version: 2
 
