@@ -131,6 +131,15 @@ updates:
       # Kafka 4.x is not compatible with our appender
       - dependency-name: "org.apache.kafka:*"
         versions: [ "[4,)" ]
+      # JUnit 6.x and above is not supported
+      - dependency-name: "org.junit:junit-bom"
+        versions: [ "[6,)" ]
+      - dependency-name: "org.junit.jupiter:*"
+        versions: [ "[6,)" ]
+      - dependency-name: "org.junit.platform:*"
+        versions: [ "[6,)" ]
+      - dependency-name: "org.junit.vintage:*"
+        versions: [ "[6,)" ]
 
   - package-ecosystem: maven
     directories:
@@ -188,6 +197,15 @@ updates:
       # see https://github.com/apache/logging-log4j2/issues/1736
       - dependency-name: "org.fusesource.jansi:jansi"
         update-types: [ "version-update:semver-major" ]
+      # JUnit 6.x and above is not supported
+      - dependency-name: "org.junit:junit-bom"
+        versions: [ "[6,)" ]
+      - dependency-name: "org.junit.jupiter:*"
+        versions: [ "[6,)" ]
+      - dependency-name: "org.junit.platform:*"
+        versions: [ "[6,)" ]
+      - dependency-name: "org.junit.vintage:*"
+        versions: [ "[6,)" ]
 
   - package-ecosystem: maven
     directories:
@@ -222,3 +240,44 @@ updates:
       dependencies:
         patterns: [ "*" ]
     target-branch: "main"
+
+  - package-ecosystem: maven
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      dependencies:
+        patterns: [ "*" ]
+    target-branch: "ignore-junit6-in-dependabot-yaml"
+    registries:
+      - maven-central
+    ignore:
+      # Keep Jakarta EE at version 9.0
+      - dependency-name: "jakarta.platform:*"
+        versions: [ "[10,)" ]
+      # OpenRewrite is quite noisy. Let us skip patch and minor updates:
+      - dependency-name: "org.openrewrite:*"
+        update-types: [ "version-update:semver-minor", "version-update:semver-patch" ]
+      - dependency-name: "org.openrewrite.maven:*"
+        update-types: [ "version-update:semver-minor", "version-update:semver-patch" ]
+      - dependency-name: "org.openrewrite.recipe:*"
+        update-types: [ "version-update:semver-minor", "version-update:semver-patch" ]
+      # Plexus Utils 4.x are for Maven 4.x
+      - dependency-name: "org.codehaus.plexus:plexus-utils"
+        versions: [ "[4,)" ]
+      # Don't upgrade to 3.x
+      - dependency-name: "org.apache.logging.log4j:log4j-api"
+        versions: [ "[3,)" ]
+      # The Console Appender only support JANSI 1.x for now
+      # see https://github.com/apache/logging-log4j2/issues/1736
+      - dependency-name: "org.fusesource.jansi:jansi"
+        update-types: [ "version-update:semver-major" ]
+      # JUnit 6.x and above is not supported
+      - dependency-name: "org.junit:junit-bom"
+        versions: [ "[6,)" ]
+      - dependency-name: "org.junit.jupiter:*"
+        versions: [ "[6,)" ]
+      - dependency-name: "org.junit.platform:*"
+        versions: [ "[6,)" ]
+      - dependency-name: "org.junit.vintage:*"
+        versions: [ "[6,)" ]
